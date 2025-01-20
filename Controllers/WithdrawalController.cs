@@ -25,6 +25,7 @@ public class WithdrawalController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] Withdrawal withdrawal)
     {
+
         if (withdrawal == null)
         {
             return BadRequest("Withdraw is null.");
@@ -38,7 +39,6 @@ public class WithdrawalController : ControllerBase
         {
             token = authorizationHeader.ToString().Replace("Bearer ", "");
         }
-
 
         SystemConfig daysToWithdraw = await _systemConfigService.GetSystemConfigByNameAsync("withdrawn_date_days");
         SystemConfig monthsToWithdraw = await _systemConfigService.GetSystemConfigByNameAsync("withdrawn_date_months");

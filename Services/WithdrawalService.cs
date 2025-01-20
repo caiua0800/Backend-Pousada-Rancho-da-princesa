@@ -2,6 +2,7 @@ using MongoDB.Driver;
 using DotnetBackend.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DotnetBackend.Services;
 
@@ -60,8 +61,8 @@ public class WithdrawalService
             await _clientService.WithdrawFromExtraBalanceAsync(withdrawal.ClientId, valorASerRetirado);
             withdrawal.WithdrawnItems.Add("Extra Balance");
             valorASerRetirado = 0;
-        }
-        else if (client.ExtraBalance > 0)
+
+        }else if (client.ExtraBalance > 0)
         {
             valorASerRetirado -= (decimal)client.ExtraBalance;
             await _clientService.WithdrawFromExtraBalanceAsync(withdrawal.ClientId, (decimal)client.ExtraBalance);
@@ -174,10 +175,10 @@ public class WithdrawalService
         {
             try
             {
-                if (newStatus == 2)
-                {
-                    await _bankAccountService.WithdrawFromBalanceAsync(withdrawalId, (decimal)existingWithdrawal.AmountWithdrawn);
-                }
+                // if (newStatus == 2)
+                // {
+                //     await _bankAccountService.WithdrawFromBalanceAsync(withdrawalId, (decimal)existingWithdrawal.AmountWithdrawn);
+                // }
 
                 if (newStatus == 3)
                 {
@@ -196,7 +197,6 @@ public class WithdrawalService
             }
             catch (Exception ex)
             {
-                // Log the error or handle it accordingly
                 Console.WriteLine($"Erro ao atualizar status ou processar a retirada: {ex.Message}");
                 return false; // Retorna falso se houve um erro
             }
