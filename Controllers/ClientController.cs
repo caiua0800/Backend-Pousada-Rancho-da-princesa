@@ -164,6 +164,9 @@ namespace DotnetBackend.Controllers
             var purchaseDetails = new List<Purchase>();
             decimal amountAvailableToWithdraw = 0;
             decimal amountTotalAvaliableFromContracts = 0;
+            decimal dailyIncome = 0;
+
+            var dailyIncomes = new List<IncomeByPurchase>();
 
 
             if (client.WalletExtract.Purchases != null)
@@ -190,6 +193,23 @@ namespace DotnetBackend.Controllers
                         if (purchase.Status == 1 || purchase.Status == 2)
                         {
                             amountTotalAvaliableFromContracts += (purchase.CurrentIncome - purchase.AmountWithdrawn);
+                        }
+
+                        if (purchase.Status == 2)
+                        {
+                            TimeSpan? difference = purchase.EndContractDate - purchase.FirstIncreasement;
+
+                            if (difference.HasValue && difference.Value.TotalDays > 0)
+                            {
+                                decimal aux = (purchase.FinalIncome - purchase.CurrentIncome) / (decimal)Math.Ceiling(difference.Value.TotalDays);
+                                dailyIncome += aux;
+
+                                dailyIncomes.Add(new IncomeByPurchase(purchase.PurchaseId, aux, purchase.CurrentIncome));
+                            }
+                            else
+                            {
+                                Console.WriteLine("A data de término do contrato deve ser posterior à data do primeiro incremento.");
+                            }
                         }
                     }
                 }
@@ -230,6 +250,8 @@ namespace DotnetBackend.Controllers
                     client.SponsorId,
                     client.Status,
                     AmountAvailableToWithdraw = amountAvailableToWithdraw,
+                    DailyIncome = dailyIncome,
+                    DailyIncomes = dailyIncomes,
                     WalletExtract = new
                     {
                         Purchases = purchaseDetails,

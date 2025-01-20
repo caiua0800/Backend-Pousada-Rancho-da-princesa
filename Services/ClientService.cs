@@ -14,15 +14,18 @@ namespace DotnetBackend.Services
     public class ClientService
     {
         private readonly IMongoCollection<Client> _clients;
-        private readonly EmailService _emailService; // Adicione esta linha
-        private readonly ExtractService _extractService; // Adicione esta linha
+        private readonly EmailService _emailService; 
+        private readonly ExtractService _extractService;
+        private readonly BalanceHistoryService _balanceHistoryService;
 
 
-        public ClientService(MongoDbService mongoDbService, EmailService emailService, ExtractService extractService) // Modifique o construtor
+        public ClientService(MongoDbService mongoDbService, EmailService emailService,
+         ExtractService extractService, BalanceHistoryService balanceHistoryService) 
         {
             _clients = mongoDbService.GetCollection<Client>("Clients");
-            _emailService = emailService; // Inicialize a instância de EmailService
+            _emailService = emailService; 
             _extractService = extractService;
+            _balanceHistoryService = balanceHistoryService;
         }
 
         public async Task<Client> CreateClientAsync(Client client, string password)
@@ -45,6 +48,10 @@ namespace DotnetBackend.Services
             client.Status = 1;
             Console.WriteLine($"Data de Criação antes da inserção: {client.DateCreated}");
             await _clients.InsertOneAsync(client);
+            BalanceHistory balll = new BalanceHistory();
+            balll.ClientId = client.Id;
+            balll.Current = 0;
+            await _balanceHistoryService.CreateBalanceHistoryAsync(balll);
 
             try
             {

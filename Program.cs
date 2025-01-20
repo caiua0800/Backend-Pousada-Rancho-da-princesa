@@ -56,6 +56,7 @@ builder.Services.AddScoped<PasswordResetService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<RelatorioService>();
 builder.Services.AddScoped<ConsultorService>();
+builder.Services.AddScoped<BalanceHistoryService>();
 
 
 builder.Services.AddScoped<EmailService>(provider =>
