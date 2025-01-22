@@ -29,9 +29,9 @@ builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", builder =>
-        builder.AllowAnyOrigin()   // Permite todas as origens
-               .AllowAnyMethod()   // Permite todos os métodos (GET, POST, etc.)
-               .AllowAnyHeader());  // Permite todos os cabeçalhos
+        builder.AllowAnyOrigin()   
+               .AllowAnyMethod()   
+               .AllowAnyHeader()); 
 });
 
 builder.Services.AddScoped<VendaService>();
@@ -109,7 +109,6 @@ app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configuração para WebSocket
 app.UseWebSockets();
 app.Use(async (context, next) =>
 {

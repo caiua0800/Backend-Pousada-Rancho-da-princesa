@@ -11,7 +11,6 @@ namespace DotnetBackend.Services
         private readonly IMongoCollection<ContractModel> _contractModels;
         private readonly CounterService _counterService;
 
-
         public ContractService(MongoDbService mongoDbService, CounterService counterService)
         {
             _contractModels = mongoDbService.GetCollection<ContractModel>("ContractModels");
@@ -41,7 +40,7 @@ namespace DotnetBackend.Services
         public async Task<bool> ReplaceContractAsync(string id, ContractModel updatedModel)
         {
             var result = await _contractModels.ReplaceOneAsync(c => c.Id == id, updatedModel);
-            return result.ModifiedCount > 0; // Retorna true se o documento foi modificado
+            return result.ModifiedCount > 0;
         }
 
         public async Task<List<ContractModel>> GetAllContractsAsync()

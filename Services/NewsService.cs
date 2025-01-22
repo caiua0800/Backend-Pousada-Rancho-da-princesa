@@ -5,7 +5,6 @@ namespace DotnetBackend.Services;
 
 public class NewsService
 {
-
     private readonly IMongoCollection<News> _news;
     private readonly CounterService _counterService;
 
