@@ -9,15 +9,11 @@ using DotnetBackend.Models;
 public class WebSocketHandler
 {
     private readonly ExtractService _extractService;
-    private readonly PurchaseService _purchaseService;
-    private readonly WithdrawalService _withdrawalService;
     private readonly List<WebSocket> _clients = new List<WebSocket>();
 
-    public WebSocketHandler(ExtractService extractService, PurchaseService purchaseService, WithdrawalService withdrawalService)
+    public WebSocketHandler(ExtractService extractService)
     {
         _extractService = extractService;
-        _purchaseService = purchaseService;
-        _withdrawalService = withdrawalService;
     }
 
     public async Task HandleWebSocketAsync(WebSocket webSocket)
@@ -29,7 +25,6 @@ public class WebSocketHandler
             while (webSocket.State == WebSocketState.Open)
             {
                 var extracts = await _extractService.GetLast50ExtractsAsync();
-                var purchases = await _purchaseService.GetLast50PurchasesAsync();
 
                 var message = Newtonsoft.Json.JsonConvert.SerializeObject(new { @event = "new_extracts", extracts });
                 var bytes = System.Text.Encoding.UTF8.GetBytes(message);

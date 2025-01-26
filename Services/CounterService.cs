@@ -19,11 +19,11 @@ namespace DotnetBackend.Services
             var update = Builders<Counter>.Update.Inc(c => c.SequenceValue, 1);
             var options = new FindOneAndUpdateOptions<Counter>
             {
-                IsUpsert = true, // Se não existir, cria um novo
-                ReturnDocument = ReturnDocument.After // Retorna o documento após a atualização
+                IsUpsert = true, 
+                ReturnDocument = ReturnDocument.After
             };
             var counter = await _counters.FindOneAndUpdateAsync(filter, update, options);
-            return counter.SequenceValue; // Retorna o novo valor
+            return counter.SequenceValue;
         }
     }
 }

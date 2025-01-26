@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fW3sT14opUA=",
+  "dgSpecHash": "yMnNYmnI0Ik=",
   "success": true,
-  "projectFilePath": "/Users/caiuamello/Desktop/Desenvolvimento/GOLDEN BRASIL/DIAMANTES/WhiteLabel/ServidorPlataforma/DotnetBackend.csproj",
+  "projectFilePath": "/Users/caiuamello/Desktop/Desenvolvimento/RANCHO DA PRINCESA/Backend/DotnetBackend.csproj",
   "expectedPackageFiles": [
     "/Users/caiuamello/.nuget/packages/awssdk.core/3.7.400.57/awssdk.core.3.7.400.57.nupkg.sha512",
     "/Users/caiuamello/.nuget/packages/awssdk.s3/3.7.407.1/awssdk.s3.3.7.407.1.nupkg.sha512",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/caiuamello/Desktop/Desenvolvimento/GOLDEN BRASIL/DIAMANTES/WhiteLabel/ServidorPlataforma/DotnetBackend.csproj": {}
+    "/Users/caiuamello/Desktop/Desenvolvimento/RANCHO DA PRINCESA/Backend/DotnetBackend.csproj": {}
   },
   "projects": {
-    "/Users/caiuamello/Desktop/Desenvolvimento/GOLDEN BRASIL/DIAMANTES/WhiteLabel/ServidorPlataforma/DotnetBackend.csproj": {
+    "/Users/caiuamello/Desktop/Desenvolvimento/RANCHO DA PRINCESA/Backend/DotnetBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/caiuamello/Desktop/Desenvolvimento/GOLDEN BRASIL/DIAMANTES/WhiteLabel/ServidorPlataforma/DotnetBackend.csproj",
+        "projectUniqueName": "/Users/caiuamello/Desktop/Desenvolvimento/RANCHO DA PRINCESA/Backend/DotnetBackend.csproj",
         "projectName": "DotnetBackend",
-        "projectPath": "/Users/caiuamello/Desktop/Desenvolvimento/GOLDEN BRASIL/DIAMANTES/WhiteLabel/ServidorPlataforma/DotnetBackend.csproj",
+        "projectPath": "/Users/caiuamello/Desktop/Desenvolvimento/RANCHO DA PRINCESA/Backend/DotnetBackend.csproj",
         "packagesPath": "/Users/caiuamello/.nuget/packages/",
-        "outputPath": "/Users/caiuamello/Desktop/Desenvolvimento/GOLDEN BRASIL/DIAMANTES/WhiteLabel/ServidorPlataforma/obj/",
+        "outputPath": "/Users/caiuamello/Desktop/Desenvolvimento/RANCHO DA PRINCESA/Backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/caiuamello/.nuget/NuGet/NuGet.Config"

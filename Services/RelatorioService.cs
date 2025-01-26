@@ -9,193 +9,56 @@ using System.Threading.Tasks;
 using DotnetBackend.Models;
 using iText.IO.Font.Constants;
 
-namespace DotnetBackend.Services
+namespace DotnetBackend.Services;
+
+public class RelatorioService
 {
-    public class RelatorioService
+    private readonly ClientService _clientService;
+    public RelatorioService(ClientService clientService)
     {
-        private readonly ClientService _clientService;
-        private readonly PurchaseService _purchaseService;
+        _clientService = clientService;
+    }
 
-        public RelatorioService(ClientService clientService, PurchaseService purchaseService)
+    public async Task<MemoryStream> GenerateClientReportPdfAsync(List<Client> clients)
+    {
+        using (var memoryStream = new MemoryStream())
         {
-            _clientService = clientService;
-            _purchaseService = purchaseService;
-        }
-
-        public async Task<MemoryStream> GenerateClientReportPdfAsync(List<Client> clients)
-        {
-            using (var memoryStream = new MemoryStream())
+            using (var pdfWriter = new PdfWriter(memoryStream))
             {
-                using (var pdfWriter = new PdfWriter(memoryStream))
+                using (var pdf = new PdfDocument(pdfWriter))
                 {
-                    using (var pdf = new PdfDocument(pdfWriter))
+                    var document = new Document(pdf);
+
+                    var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                    document.Add(new Paragraph("Relatório de Clientes")
+                        .SetFont(boldFont)
+                        .SetFontSize(20)
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                    var table = new Table(new float[] { 3, 3, 3, 3 })
+                        .SetWidth(UnitValue.CreatePercentValue(100));
+
+                    table.AddHeaderCell("Nome");
+                    table.AddHeaderCell("ID");
+                    table.AddHeaderCell("Data de Cadastro");
+                    table.AddHeaderCell("Telefone");
+
+                    foreach (var client in clients)
                     {
-                        var document = new Document(pdf);
-
-                        var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
-
-                        document.Add(new Paragraph("Relatório de Clientes")
-                            .SetFont(boldFont)
-                            .SetFontSize(20)
-                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)); // Centraliza o título
-
-                        var table = new Table(new float[] { 3, 3, 3, 3 })
-                            .SetWidth(UnitValue.CreatePercentValue(100)); // Define a largura da tabela para 100%
-
-                        table.AddHeaderCell("Nome");
-                        table.AddHeaderCell("ID");
-                        table.AddHeaderCell("Data de Cadastro");
-                        table.AddHeaderCell("Telefone");
-
-                        foreach (var client in clients)
-                        {
-                            table.AddCell(client.Name);
-                            table.AddCell(client.Id);
-                            table.AddCell(client.DateCreated.ToString("dd/MM/yyyy"));
-                            table.AddCell(client.Phone);
-                        }
-
-                        document.Add(table);
-                        document.Close();
+                        table.AddCell(client.Name);
+                        table.AddCell(client.Id);
+                        table.AddCell(client.DateCreated.ToString("dd/MM/yyyy"));
+                        table.AddCell(client.Phone);
                     }
+
+                    document.Add(table);
+                    document.Close();
                 }
-
-                return memoryStream;
             }
-        }
 
-        public async Task<MemoryStream> GenerateConsultorReportPdfAsync(List<Consultor> consultores)
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var pdfWriter = new PdfWriter(memoryStream))
-                {
-                    using (var pdf = new PdfDocument(pdfWriter))
-                    {
-                        var document = new Document(pdf);
-
-                        var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
-
-                        document.Add(new Paragraph("Relatório de Consultores")
-                            .SetFont(boldFont)
-                            .SetFontSize(20)
-                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)); // Centraliza o título
-
-                        var table = new Table(new float[] { 3, 3, 3, 3, 3 })
-                            .SetWidth(UnitValue.CreatePercentValue(100)); // Define a largura da tabela para 100%
-
-                        table.AddHeaderCell("Nome");
-                        table.AddHeaderCell("ID");
-                        table.AddHeaderCell("Data de Cadastro");
-                        table.AddHeaderCell("Telefone");
-                        table.AddHeaderCell("Quantidade Clientes");
-
-                        foreach (var consultor in consultores)
-                        {
-                            table.AddCell(consultor.Name);
-                            table.AddCell(consultor.Id);
-                            table.AddCell(consultor.DateCreated.ToString("dd/MM/yyyy"));
-                            table.AddCell(consultor.Phone);
-                            table.AddCell(consultor.ClientsQtt?.ToString() ?? "0"); // Valor padrão se null
-                        }
-
-                        document.Add(table);
-                        document.Close();
-                    }
-                }
-
-                return memoryStream;
-            }
-        }
-
-        public async Task<MemoryStream> GeneratePurchaseReportPdfAsync(List<Purchase> purchases)
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var pdfWriter = new PdfWriter(memoryStream))
-                {
-                    using (var pdf = new PdfDocument(pdfWriter))
-                    {
-                        var document = new Document(pdf);
-
-                        var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
-
-                        document.Add(new Paragraph("Relatório de Compras")
-                            .SetFont(boldFont)
-                            .SetFontSize(20)
-                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
-
-                        var table = new Table(new float[] { 3, 3, 3, 3, 3 })
-                            .SetWidth(UnitValue.CreatePercentValue(100)); // Define a largura da tabela para 100%
-
-                        table.AddHeaderCell("ID");
-                        table.AddHeaderCell("Cliente Id");
-                        table.AddHeaderCell("Data da Compra");
-                        table.AddHeaderCell("Valor De Compra");
-                        table.AddHeaderCell("Valor Pago");
-
-                        foreach (var purchase in purchases)
-                        {
-                            table.AddCell(purchase.PurchaseId);
-                            table.AddCell(purchase.ClientId);
-                            table.AddCell(purchase.PurchaseDate?.ToString("dd/MM/yyyy"));
-                            table.AddCell("R$" + purchase.TotalPrice.ToString("").Replace(".", ","));
-                            table.AddCell("R$" + purchase.AmountPaid.ToString("").Replace(".", ","));
-                        }
-
-                        document.Add(table);
-                        document.Close();
-                    }
-                }
-
-                return memoryStream;
-            }
-        }
-
-        public async Task<MemoryStream> GenerateWithdrawalReportPdfAsync(List<Withdrawal> withdrawals)
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                using (var pdfWriter = new PdfWriter(memoryStream))
-                {
-                    using (var pdf = new PdfDocument(pdfWriter))
-                    {
-                        var document = new Document(pdf);
-
-                        var boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
-
-                        document.Add(new Paragraph("Relatório de Saques")
-                            .SetFont(boldFont)
-                            .SetFontSize(20)
-                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
-
-                        var table = new Table(new float[] { 3, 3, 3, 3, 3, 3 })
-                            .SetWidth(UnitValue.CreatePercentValue(100)); // Define a largura da tabela para 100%
-
-                        table.AddHeaderCell("ID");
-                        table.AddHeaderCell("Cliente Id");
-                        table.AddHeaderCell("Data do Saque");
-                        table.AddHeaderCell("Valor");
-                        table.AddHeaderCell("Valor Recebível");
-                        table.AddHeaderCell("Retirado De");
-
-                        foreach (var withdrawal in withdrawals)
-                        {
-                            table.AddCell(withdrawal.WithdrawalId);
-                            table.AddCell(withdrawal.ClientId);
-                            table.AddCell(withdrawal.DateCreated?.ToString("dd/MM/yyyy"));
-                            table.AddCell("R$" + withdrawal.AmountWithdrawn.ToString("").Replace(".", ","));
-                            table.AddCell("R$" + withdrawal.AmountWithdrawnReceivable?.ToString("").Replace(".", ","));
-                            table.AddCell(string.Join(", ", withdrawal.WithdrawnItems));
-                        }
-
-                        document.Add(table);
-                        document.Close();
-                    }
-                }
-
-                return memoryStream;
-            }
+            return memoryStream;
         }
     }
+
 }

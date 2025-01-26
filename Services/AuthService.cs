@@ -14,36 +14,23 @@ namespace DotnetBackend.Services
     {
         private readonly IConfiguration _configuration;
         private readonly ClientService _clientService;
-        private readonly AdminService _adminService;
+        private readonly UserService _userService;
 
-        public AuthService(IConfiguration configuration, ClientService clientService, AdminService adminService)
+        public AuthService(IConfiguration configuration, ClientService clientService, UserService userService)
         {
             _configuration = configuration;
             _clientService = clientService;
-            _adminService = adminService;
+            _userService = userService;
         }
 
         public async Task<IActionResult> GenerateTokenAsync(UserLogin login)
         {
-            var client = await _clientService.GetClientByIdAsync(login.Id);
 
-            if (client == null)
+            var user = await _userService.GetUserByIdAsync(login.Id);
+
+            if (user != null && await _userService.VerifyPasswordAsync(user.Id, login.Password))
             {
-                var admin = await _adminService.GetAdminByIdAsync(login.Id);
-
-                if (admin != null && await _adminService.VerifyPasswordAsync(admin.Id, login.Password))
-                {
-                    return GenerateTokenResponse(admin.Name, admin.Id, "Admin", admin.PlatformId);
-                }
-            }
-            else if (await _clientService.VerifyPasswordAsync(client.Id, login.Password))
-            {
-                if (client.Status == 2)
-                {
-                    return new ForbidResult();
-                }
-
-                return GenerateTokenResponse(client.Name, client.Id, "Client", client.PlatformId);
+                return GenerateTokenResponse(user.Name, user.Id, "User", "Rancho da Princesa");
             }
 
             return new UnauthorizedResult();
@@ -59,16 +46,15 @@ namespace DotnetBackend.Services
 
                 if (validatedToken != null)
                 {
-                    // Verifica se a data de expiração está no passado
                     return validatedToken.ValidTo < DateTime.UtcNow;
                 }
             }
             catch (Exception)
             {
-                return true; 
+                return true;
             }
 
-            return true; 
+            return true;
         }
 
         private IActionResult GenerateTokenResponse(string name, string id, string role, string platformId)
@@ -106,7 +92,7 @@ namespace DotnetBackend.Services
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo,
-                platformId = platformId // Retorna o PlatformId no resultado do token
+                platformId = platformId
             });
         }
 
@@ -124,7 +110,7 @@ namespace DotnetBackend.Services
             try
             {
 
-                if(IsTokenExpired(token))
+                if (IsTokenExpired(token))
                 {
                     throw new Exception("Token Expirado");
                 }
@@ -142,12 +128,12 @@ namespace DotnetBackend.Services
 
         public bool VerifyIfAdminToken(string token)
         {
-            return VerifyToken(token) == "Admin";
+            return VerifyToken(token) == "User";
         }
 
         public bool VerifyIfClientToken(string token)
         {
-            return VerifyToken(token) != "Admin";
+            return VerifyToken(token) != "User";
         }
 
         public bool VerifyIfIsReallyTheClient(string clientId, string token)

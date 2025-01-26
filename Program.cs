@@ -13,7 +13,6 @@ using DotnetBackend.Queries;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurações do MongoDB
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
@@ -25,7 +24,6 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
 
 builder.Services.AddSingleton<MongoDbService>();
 
-// Configuração do CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", builder =>
@@ -34,29 +32,19 @@ builder.Services.AddCors(options =>
                .AllowAnyHeader()); 
 });
 
-builder.Services.AddScoped<VendaService>();
 builder.Services.AddScoped<ClientService>();
-builder.Services.AddScoped<PurchaseService>();
-builder.Services.AddScoped<WithdrawalService>();
-builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ClientQueries>();
-builder.Services.AddScoped<SystemConfigService>();
 builder.Services.AddScoped<CounterService>();
+builder.Services.AddScoped<SystemConfigService>();
 builder.Services.AddScoped<ExtractService>();
-builder.Services.AddScoped<ContractService>();
-builder.Services.AddScoped<GatewayService>();
-builder.Services.AddScoped<ChatService>();
-builder.Services.AddScoped<BankAccountService>();
-builder.Services.AddScoped<AdminWithdrawalService>();
 builder.Services.AddScoped<WebSocketHandler>();
-builder.Services.AddScoped<NewsService>();
-builder.Services.AddScoped<IndicationService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<PasswordResetService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<RelatorioService>();
-builder.Services.AddScoped<ConsultorService>();
-builder.Services.AddScoped<BalanceHistoryService>();
+builder.Services.AddScoped<ChaleService>();
+builder.Services.AddScoped<ReservaService>();
 
 
 builder.Services.AddScoped<EmailService>(provider =>
@@ -88,12 +76,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Configuração do Swagger
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configurações para ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();

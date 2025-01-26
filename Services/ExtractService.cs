@@ -30,13 +30,11 @@ namespace DotnetBackend.Services
 
         public async Task<List<Extract>> GetAllExtractsAsync()
         {
-            // Retorna todos os extratos
             return await _extracts.Find(_ => true).ToListAsync();
         }
 
         public async Task<Extract?> GetExtractByIdAsync(string id)
         {
-            // Remove espaços em branco do ID informado
             var normalizedId = id.Trim();
             return await _extracts.Find(e => e.ExtractId == normalizedId).FirstOrDefaultAsync();
         }
@@ -57,15 +55,12 @@ namespace DotnetBackend.Services
 
         public async Task<List<Extract>> GetLast50ExtractsAsync()
         {
-            // Obtém os últimos 50 extratos, ordenados pelo ExtractId
             return await _extracts
-                .Find(_ => true) // Pega todos os extratos
+                .Find(_ => true) 
                 .SortByDescending(e => e.ExtractId)
                 .Limit(50)
                 .ToListAsync();
         }
-
-
 
         public async Task<List<Extract>> GetExtractsByClientIdAsync(string clientId)
         {
@@ -74,13 +69,13 @@ namespace DotnetBackend.Services
                 throw new ArgumentException("Client ID must be provided.", nameof(clientId));
             }
 
-            return await _extracts.Find(e => e.ClientId == clientId).ToListAsync(); // Retorna extratos pelo ClientId
+            return await _extracts.Find(e => e.ClientId == clientId).ToListAsync(); 
         }
 
         public async Task<bool> DeleteExtractAsync(string id)
         {
             var deleteResult = await _extracts.DeleteOneAsync(e => e.ExtractId == id);
-            return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0; // Retorna true se a remoção foi bem-sucedida
+            return deleteResult.IsAcknowledged && deleteResult.DeletedCount > 0;
         }
 
         public async Task<List<Extract>> GetExtractsContainingStringAsync(string searchString)
@@ -91,8 +86,7 @@ namespace DotnetBackend.Services
             }
             string lowerSearchString = searchString.ToLower();
 
-            return await _extracts.Find(e => e.Name.ToLower().Contains(lowerSearchString))
-                .ToListAsync();
+            return await _extracts.Find(e => e.Name.ToLower().Contains(lowerSearchString)).ToListAsync();
         }
     }
 }
